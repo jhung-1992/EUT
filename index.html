@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>作戰時程表 D-Day TimeLine｜填空練習</title>
+<style>
+:root{--bg:#f3f5f7;--card:#fff;--ink:#17202a;--line:#263238;--muted:#667085;--red:#c62828;--redbg:#ffebee;--blue:#1f4f78;--green:#147d64}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;line-height:1.45}
+.wrap{max-width:1500px;margin:auto;padding:24px 18px 56px}
+.hero{background:linear-gradient(135deg,#17324a,#245a78);color:#fff;border-radius:18px;padding:22px 24px;box-shadow:0 8px 28px rgba(0,0,0,.12)}
+h1{font-size:clamp(22px,3vw,34px);margin:0 0 8px}
+.hero p{margin:0;opacity:.9}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 12px;align-items:center}
+button{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:#fff;box-shadow:0 2px 9px rgba(0,0,0,.08);color:#233}
+button.primary,button.active{background:var(--blue);color:#fff} button.danger{color:#8b1e1e}
+.progress{margin-left:auto;font-weight:700;color:var(--muted)}
+.section{background:var(--card);border-radius:16px;padding:18px;margin-top:16px;box-shadow:0 4px 20px rgba(0,0,0,.07)}
+.section h2{margin:0 0 12px;font-size:22px}
+.note{color:var(--muted);font-size:14px;margin-bottom:14px}
+.table-scroll{overflow-x:hidden;padding-bottom:5px;width:100%}
+.timeline-table{border-collapse:collapse;width:100%;min-width:0;table-layout:fixed;background:white}
+.timeline-table td{border:1.5px solid var(--line);padding:7px;vertical-align:middle;text-align:center;font-size:14px;min-width:92px;height:58px;white-space:normal;word-break:break-word}
+.timeline-table td.side-head{font-weight:800;background:#e8eef3;min-width:110px}
+.timeline-table td.label{font-weight:750;background:#f1f5f8}
+.timeline-table td.blank{background:#fafafa}
+.fill-cell{background:#fffdf6!important;position:relative}
+.answer-input{width:100%;min-height:38px;border:2px solid #aeb7c2;border-radius:8px;padding:7px 8px;background:#fff;font:inherit;text-align:center;resize:vertical;outline:none;transition:.15s}
+.answer-input:focus{border-color:#4b7da6;box-shadow:0 0 0 3px rgba(75,125,166,.14)}
+.answer-input.correct{color:var(--red);border-color:var(--red);background:var(--redbg);font-weight:800}
+.answer-input.wrong{border-color:#d8a02a;background:#fff9e8}
+.mark{display:block;height:18px;font-size:13px;margin-top:3px;font-weight:800}
+.mark.ok{color:var(--red)} .mark.no{color:#9a6a00}
+.answer-cell{background:#fff8f8!important;color:#9d1b1b;font-weight:750}
+.divider{height:1px;background:#dfe4ea;margin:28px 0}
+.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+@media(max-width:720px){
+  body{font-size:14px;overflow-x:hidden}
+  .wrap{padding:6px 4px 24px;max-width:100%;width:100%}
+  .hero{border-radius:10px;padding:12px 10px}
+  h1{font-size:18px;line-height:1.3}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0 8px}
+  button{width:100%;min-height:42px;padding:9px 6px;font-size:14px;border-radius:8px}
+  .progress{grid-column:1/-1;width:100%;margin:0;text-align:center;font-size:13px}
+  .section{padding:5px 3px;border-radius:8px;margin-top:8px;overflow:hidden}
+  .section h2{font-size:17px;margin:3px 2px 7px}
+  .table-scroll{overflow-x:hidden;width:100%;max-width:100%}
+  .timeline-table{width:100%;min-width:0!important;table-layout:fixed}
+  .timeline-table td{padding:2px 1px;font-size:7.5px;line-height:1.18;min-width:0!important;height:38px;word-break:break-all;overflow-wrap:anywhere}
+  .timeline-table td.side-head{min-width:0!important;font-size:8px}
+  .fill-cell{padding:1px!important;cursor:pointer}
+  .answer-input{width:100%;min-width:0;min-height:29px;height:100%;padding:2px 1px;font-size:8px;line-height:1.15;border-width:1px;border-radius:3px;resize:none;overflow:hidden;white-space:pre-wrap;word-break:break-all}
+  .answer-input:focus{box-shadow:none}
+
+  .answer-input[readonly]{cursor:pointer;caret-color:transparent;background:#fffdf6}
+  .fill-cell{cursor:pointer;touch-action:manipulation}
+  .mark{display:none!important}
+  .answer-cell{font-size:7.5px!important;line-height:1.18}
+  .footer{font-size:11px;margin-top:14px}
+  .input-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+  .input-modal.show{display:flex}
+  .input-box{width:min(94vw,460px);background:#fff;border-radius:14px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.3)}
+  .input-box h3{margin:0 0 10px;font-size:18px;text-align:center}
+  .popup-input{width:100%;min-height:110px;border:2px solid #8aa0b5;border-radius:10px;padding:12px;font-size:18px;line-height:1.45;resize:vertical;outline:none}
+  .popup-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(31,79,120,.12)}
+  .popup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .popup-actions button{font-size:16px}
+}
+@media print{body{background:#fff}.hero,.toolbar,.note{display:none}.section{box-shadow:none;padding:0}.table-scroll{overflow:visible}.timeline-table{min-width:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>二、請完成下述作戰時程表(D-Day TimeLine)內容。</h1>
+  </header>
+
+  <div class="toolbar">
+    <button class="danger" id="clearBtn">清空作答</button>
+    <button id="toggleBtn">答案區</button>
+    <div class="progress" id="progress">答對 0 / 0</div>
+  </div>
+
+  <section class="section" id="practiceSection">
+    <h2>填空練習</h2>
+    <div class="table-scroll"><table class="timeline-table"><tbody><tr><td rowspan="4" colspan="2" class="side-head label">國軍<br>戰備<br>階段<br>劃分</td><td colspan="3" class="fill-cell"><input class="answer-input" data-answer="經常戰備時期" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="6" class="fill-cell"><input class="answer-input" data-answer="防衛作戰時期" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td colspan="3" class="fill-cell"><input class="answer-input" data-answer="戰備整備階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="應急作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="4" class="fill-cell"><input class="answer-input" data-answer="全面作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td rowspan="2" class="fill-cell"><input class="answer-input" data-answer="常態危機處理" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><textarea class="answer-input" data-answer="二級
+加強
+戒備" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><textarea class="answer-input" data-answer="一級
+加強
+戒備" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="整體
+防空" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="聯合
+截擊" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="灘岸
+戰鬥" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="反空
+機降" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="反擊
+作戰" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><textarea class="answer-input" data-answer="縱深
+作戰" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td></tr><tr><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="立即備戰操演" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td rowspan="4" class="side-head label">總長<br>削弱<br>戰略<br>指導</td><td class="fill-cell"><textarea class="answer-input" data-answer="作戰
+階段" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="常態危機處理" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="4" class="fill-cell"><input class="answer-input" data-answer="備戰部署階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="聯合反登陸階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="濱海暨灘岸戰鬥階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="縱深防禦階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="持久作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td rowspan="2" class="fill-cell"><input class="answer-input" data-answer="戰備等級" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td rowspan="2" class="fill-cell"><input class="answer-input" data-answer="常態/危機" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><textarea class="answer-input" data-answer="二級
+加強
+戒備" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><textarea class="answer-input" data-answer="一級
+加強
+戒備" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td rowspan="2" colspan="2" class="fill-cell"><input class="answer-input" data-answer="應急作戰" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td rowspan="2" colspan="4" class="fill-cell"><input class="answer-input" data-answer="全面作戰" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="立即備戰操演" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td class="fill-cell"><input class="answer-input" data-answer="作戰概念" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="灰色地帶應處" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="4" class="fill-cell"><textarea class="answer-input" data-answer="機動分散部屬
+戰力保存
+聯合防護(防空、資電)
+整體空中級飛彈防禦
+聯合海上防禦" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="距敵於彼岸，擊敵於半渡" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="毀敵於水際灘頭" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="阻敵於陣地" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td class="fill-cell"><input class="answer-input" data-answer="總體作戰" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td colspan="2" class="side-head label">作戰時程表<br>(D-Day TimeLine)</td><td class="fill-cell"><textarea class="answer-input" data-answer="Phase0
+D-70至D-40" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><textarea class="answer-input" data-answer="Phase1
+D-40至D-7" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><textarea class="answer-input" data-answer="Phase2
+D-7至D-2" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><textarea class="answer-input" data-answer="Phase3
+D-2至D+7" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><textarea class="answer-input" data-answer="Phase4
+D+7至D+45" aria-label="填空答案" rows="3" spellcheck="false"></textarea><span class="mark" aria-hidden="true"></span></td></tr><tr><td rowspan="2" colspan="2" class="side-head label">敵軍個階段作戰行動</td><td colspan="3" class="fill-cell"><input class="answer-input" data-answer="戰役組織與整備" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="先期作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="登陸作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="陸上作戰階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr><tr><td class="fill-cell"><input class="answer-input" data-answer="衝突前準備/最後攻臺計畫及準備" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="兵力部署前推既聯合封鎖" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="聯合火力打擊/登陸作戰" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="島上作戰" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td><td colspan="2" class="fill-cell"><input class="answer-input" data-answer="縱深作戰/鞏固階段" aria-label="填空答案" autocomplete="off" spellcheck="false"><span class="mark" aria-hidden="true"></span></td></tr></tbody></table></div>
+  </section>
+
+  <section class="section" id="answersSection" hidden>
+    <h2>完整答案</h2>
+    <div class="table-scroll"><table class="timeline-table"><tbody><tr><td rowspan="4" colspan="2" class="side-head answer-cell">國軍<br>戰備<br>階段<br>劃分</td><td colspan="3" class="answer-cell">經常戰備時期</td><td colspan="6" class="answer-cell">防衛作戰時期</td></tr><tr><td colspan="3" class="answer-cell">戰備整備階段</td><td colspan="2" class="answer-cell">應急作戰階段</td><td colspan="4" class="answer-cell">全面作戰階段</td></tr><tr><td rowspan="2" class="answer-cell">常態危機處理</td><td class="answer-cell">二級<br>加強<br>戒備</td><td class="answer-cell">一級<br>加強<br>戒備</td><td rowspan="2" class="answer-cell">整體<br>防空</td><td rowspan="2" class="answer-cell">聯合<br>截擊</td><td rowspan="2" class="answer-cell">灘岸<br>戰鬥</td><td rowspan="2" class="answer-cell">反空<br>機降</td><td rowspan="2" class="answer-cell">反擊<br>作戰</td><td rowspan="2" class="answer-cell">縱深<br>作戰</td></tr><tr><td colspan="2" class="answer-cell">立即備戰操演</td></tr><tr><td rowspan="4" class="side-head answer-cell">總長<br>削弱<br>戰略<br>指導</td><td class="answer-cell">作戰<br>階段</td><td class="answer-cell">常態危機處理</td><td colspan="4" class="answer-cell">備戰部署階段</td><td class="answer-cell">聯合反登陸階段</td><td class="answer-cell">濱海暨灘岸戰鬥階段</td><td class="answer-cell">縱深防禦階段</td><td class="answer-cell">持久作戰階段</td></tr><tr><td rowspan="2" class="answer-cell">戰備等級</td><td rowspan="2" class="answer-cell">常態/危機</td><td class="answer-cell">二級<br>加強<br>戒備</td><td class="answer-cell">一級<br>加強<br>戒備</td><td rowspan="2" colspan="2" class="answer-cell">應急作戰</td><td rowspan="2" colspan="4" class="answer-cell">全面作戰</td></tr><tr><td colspan="2" class="answer-cell">立即備戰操演</td></tr><tr><td class="answer-cell">作戰概念</td><td class="answer-cell">灰色地帶應處</td><td colspan="4" class="answer-cell">機動分散部屬<br>戰力保存<br>聯合防護(防空、資電)<br>整體空中級飛彈防禦<br>聯合海上防禦</td><td class="answer-cell">距敵於彼岸，擊敵於半渡</td><td class="answer-cell">毀敵於水際灘頭</td><td class="answer-cell">阻敵於陣地</td><td class="answer-cell">總體作戰</td></tr><tr><td colspan="2" class="side-head answer-cell">作戰時程表<br>(D-Day TimeLine)</td><td class="answer-cell">Phase0<br>D-70至D-40</td><td colspan="2" class="answer-cell">Phase1<br>D-40至D-7</td><td colspan="2" class="answer-cell">Phase2<br>D-7至D-2</td><td colspan="2" class="answer-cell">Phase3<br>D-2至D+7</td><td colspan="2" class="answer-cell">Phase4<br>D+7至D+45</td></tr><tr><td rowspan="2" colspan="2" class="side-head answer-cell">敵軍個階段作戰行動</td><td colspan="3" class="answer-cell">戰役組織與整備</td><td colspan="2" class="answer-cell">先期作戰階段</td><td colspan="2" class="answer-cell">登陸作戰階段</td><td colspan="2" class="answer-cell">陸上作戰階段</td></tr><tr><td class="answer-cell">衝突前準備/最後攻臺計畫及準備</td><td colspan="2" class="answer-cell">兵力部署前推既聯合封鎖</td><td colspan="2" class="answer-cell">聯合火力打擊/登陸作戰</td><td colspan="2" class="answer-cell">島上作戰</td><td colspan="2" class="answer-cell">縱深作戰/鞏固階段</td></tr></tbody></table></div>
+  </section>
+
+
+  <div class="input-modal" id="inputModal" aria-hidden="true">
+    <div class="input-box" role="dialog" aria-modal="true" aria-labelledby="inputTitle">
+      <h3 id="inputTitle">輸入答案</h3>
+      <textarea id="popupInput" class="popup-input" rows="4" autocomplete="off" spellcheck="false"></textarea>
+      <div class="popup-actions">
+        <button id="cancelInputBtn">取消</button>
+        <button class="primary" id="doneInputBtn">完成</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">作戰時程表（D-Day TimeLine）網頁填空練習</div>
+</div>
+<script>
+const inputs=[...document.querySelectorAll('.answer-input')];
+const progress=document.getElementById('progress');
+const practiceSection=document.getElementById('practiceSection');
+const answersSection=document.getElementById('answersSection');
+const toggleBtn=document.getElementById('toggleBtn');
+const clearBtn=document.getElementById('clearBtn');
+const modal=document.getElementById('inputModal');
+const popupInput=document.getElementById('popupInput');
+const doneInputBtn=document.getElementById('doneInputBtn');
+const cancelInputBtn=document.getElementById('cancelInputBtn');
+let activeInput=null;
+
+function norm(s){return (s||'').normalize('NFKC').replace(/\s+/g,'').toLowerCase();}
+function judge(el){
+  const typed=norm(el.value), ans=norm(el.dataset.answer);
+  el.classList.remove('correct','wrong');
+  if(!typed) return false;
+  if(typed===ans){el.classList.add('correct');return true;}
+  return false;
+}
+function updateProgress(){
+  const good=inputs.filter(x=>judge(x)).length;
+  progress.textContent=`答對 ${good} / ${inputs.length}`;
+}
+function syncInput(){
+  if(!activeInput) return;
+  activeInput.value=popupInput.value;
+  updateProgress();
+}
+function openInput(el){
+  activeInput=el;
+  popupInput.value=el.value;
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  setTimeout(()=>{popupInput.focus();popupInput.setSelectionRange(popupInput.value.length,popupInput.value.length);},60);
+}
+function closeInput(){
+  syncInput();
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  activeInput=null;
+}
+function isMobile(){return window.matchMedia('(max-width:720px)').matches;}
+function applyMobileInputMode(){
+  inputs.forEach(el=>{
+    if(isMobile()){
+      el.setAttribute('readonly','readonly');
+      el.setAttribute('inputmode','none');
+      el.setAttribute('aria-haspopup','dialog');
+    }else{
+      el.removeAttribute('readonly');
+      el.removeAttribute('inputmode');
+      el.removeAttribute('aria-haspopup');
+    }
+  });
+}
+
+inputs.forEach(el=>{
+  el.addEventListener('input',updateProgress);
+  el.addEventListener('click',e=>{
+    if(isMobile()){
+      e.preventDefault();
+      e.stopPropagation();
+      openInput(el);
+    }
+  });
+  const cell=el.closest('.fill-cell');
+  if(cell){
+    cell.addEventListener('click',e=>{
+      if(isMobile() && e.target!==el){
+        e.preventDefault();
+        openInput(el);
+      }
+    });
+  }
+});
+window.addEventListener('resize',applyMobileInputMode);
+applyMobileInputMode();
+popupInput.addEventListener('input',syncInput);
+doneInputBtn.addEventListener('click',closeInput);
+cancelInputBtn.addEventListener('click',()=>{
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+  activeInput=null;
+});
+modal.addEventListener('click',e=>{if(e.target===modal) closeInput();});
+
+clearBtn.addEventListener('click',()=>{
+  inputs.forEach(x=>{x.value='';x.classList.remove('correct','wrong');});
+  updateProgress();
+  clearBtn.classList.add('active');
+  setTimeout(()=>clearBtn.classList.remove('active'),350);
+  if(answersSection.hidden===false){answersSection.hidden=true;practiceSection.hidden=false;toggleBtn.classList.remove('active');}
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+toggleBtn.addEventListener('click',()=>{
+  const showAnswers=answersSection.hidden;
+  answersSection.hidden=!showAnswers;
+  practiceSection.hidden=showAnswers;
+  toggleBtn.classList.toggle('active',showAnswers);
+  toggleBtn.textContent=showAnswers?'返回填空':'答案區';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+updateProgress();
+</script>
+</body></html>
